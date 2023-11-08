@@ -7,6 +7,7 @@ import (
 type UserRepository interface {
 	Save(user models.User) (models.User, error)
 	FindByEmail(email string) (models.User, error)
+	FindByUsername(username string) (models.User, error)
 	FindByID(ID int) (models.User, error)
 	Update(user models.User) (models.User, error)
 	Delete(ID int) error

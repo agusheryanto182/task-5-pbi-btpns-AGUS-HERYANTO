@@ -26,9 +26,18 @@ func (r *UserRepositoryImpl) FindByEmail(email string) (models.User, error) {
 	return user, nil
 }
 
+func (r *UserRepositoryImpl) FindByUsername(username string) (models.User, error) {
+	var user models.User
+	err := r.db.Where("username = ?", username).Find(&user).Error
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func (r *UserRepositoryImpl) FindByID(ID int) (models.User, error) {
 	var user models.User
-	err := r.db.Where("id = ?", ID).Find(&user).Error
+	err := r.db.Where("ID = ?", ID).Find(&user).Error
 	if err != nil {
 		return user, err
 	}
@@ -45,10 +54,10 @@ func (r *UserRepositoryImpl) Update(user models.User) (models.User, error) {
 
 func (r *UserRepositoryImpl) Delete(ID int) error {
 	var user models.User
-	err := r.db.Where("id = ?", ID).Delete(&user).Error
+	err := r.db.Where("ID = ?", ID).Delete(&user).Error
 	if err != nil {
 		return err
-	}
+	} 
 	return nil
 }
 
