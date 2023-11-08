@@ -1,8 +1,12 @@
+package models
+
+import "time"
+
 type User struct {
 	ID        int
 	Username  string
 	Email     string
 	Password  string
-	CreatedAt time.time
-	UpdatedAt time.time
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
