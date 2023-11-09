@@ -38,7 +38,7 @@ func (s *UserServiceImpl) RegisterUser(input app.RegisterUserInput) (models.User
 	return newUser, nil
 }
 
-func (s *UserServiceImpl) Login(input app.LoginInput) (models.User, error) {
+func (s *UserServiceImpl) LoginUser(input app.LoginInput) (models.User, error) {
 	err := s.validate.Struct(input)
 	if err != nil {
 		return models.User{}, err

@@ -17,13 +17,6 @@ type RegisterUserFormatter struct {
 	Token    string `json:"token"`
 }
 
-type ListOfFollowerFormatter struct {
-	ID             int    `json:"id"`
-	Name           string `json:"name"`
-	Username       string `json:"username"`
-	AvatarFileName string `json:"avatar_file_name"`
-}
-
 func RegisterFormatUser(user models.User, token string) RegisterUserFormatter {
 	formatter := RegisterUserFormatter{
 		ID:       user.ID,
