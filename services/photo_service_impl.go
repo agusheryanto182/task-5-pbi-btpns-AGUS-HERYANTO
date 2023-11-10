@@ -14,16 +14,17 @@ type PhotoServiceImpl struct {
 	validate        *validator.Validate
 }
 
-func (s *PhotoServiceImpl) Create(input app.PhotoInput) (models.Photo, error) {
-	err := s.validate.Struct(input)
+func (s *PhotoServiceImpl) Create(inputID int, inputData app.PhotoInput) (models.Photo, error) {
+	err := s.validate.Struct(inputData)
 	if err != nil {
 		return models.Photo{}, err
 	}
 
 	photo := models.Photo{}
-	photo.Title = input.Title
-	photo.Caption = input.Caption
-	photo.PhotoURL = input.PhotoURL
+	photo.Title = inputData.Title
+	photo.Caption = inputData.Caption
+	photo.PhotoURL = inputData.PhotoURL
+	photo.UserID.ID = inputID
 
 	created, err := s.photoRepository.Save(photo)
 	if err != nil {
