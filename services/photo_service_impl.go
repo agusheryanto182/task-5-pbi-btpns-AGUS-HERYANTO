@@ -53,7 +53,7 @@ func (s *PhotoServiceImpl) GetByID(ID int) (models.Photo, error) {
 	return photo, nil
 }
 
-func (s *PhotoServiceImpl) Update(inputID int, inputData app.PhotoInput) (models.Photo, error) {
+func (s *PhotoServiceImpl) Update(inputID int, inputData app.PhotoUpdate) (models.Photo, error) {
 	// err := s.validate.Struct(inputData)
 	// if err != nil {
 	// 	return models.Photo{}, err
@@ -66,7 +66,6 @@ func (s *PhotoServiceImpl) Update(inputID int, inputData app.PhotoInput) (models
 
 	photo.Title = inputData.Title
 	photo.Caption = inputData.Caption
-	photo.PhotoURL = inputData.PhotoURL
 
 	updatedPhoto, err := s.photoRepository.Update(photo)
 	if err != nil {

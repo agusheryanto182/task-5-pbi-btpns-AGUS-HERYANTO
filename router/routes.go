@@ -27,7 +27,7 @@ func NewRouter(c *Controllers, a *AuthMiddleware) *gin.Engine {
 	api.DELETE("/users/:userId", middlewares.AuthMiddleware(a.AuthService, a.UserService), c.UserController.Delete)
 
 	api.POST("/photos", middlewares.AuthMiddleware(a.AuthService, a.UserService), c.PhotoController.Create)
-	api.GET("/photos", middlewares.AuthMiddleware(a.AuthService, a.UserService), c.PhotoController.GetByID)
+	api.GET("/photos", middlewares.AuthMiddleware(a.AuthService, a.UserService), c.PhotoController.GetByUserID)
 	api.PUT("/photos/:photoId", middlewares.AuthMiddleware(a.AuthService, a.UserService), c.PhotoController.Edit)
 	api.DELETE("/photos/:photoId", middlewares.AuthMiddleware(a.AuthService, a.UserService), c.PhotoController.Delete)
 
