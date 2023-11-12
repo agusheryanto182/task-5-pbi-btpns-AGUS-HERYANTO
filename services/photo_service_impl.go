@@ -15,22 +15,30 @@ type PhotoServiceImpl struct {
 }
 
 func (s *PhotoServiceImpl) Create(inputID int, inputData app.PhotoInput) (models.Photo, error) {
-	err := s.validate.Struct(inputData)
-	if err != nil {
-		return models.Photo{}, err
-	}
+	// err := s.validate.Struct(inputData)
+	// if err != nil {
+	// 	return models.Photo{}, err
+	// }
 
 	photo := models.Photo{}
 	photo.Title = inputData.Title
 	photo.Caption = inputData.Caption
 	photo.PhotoURL = inputData.PhotoURL
-	photo.UserID.ID = inputID
+	photo.UserID = inputID
 
 	created, err := s.photoRepository.Save(photo)
 	if err != nil {
 		return created, err
 	}
 	return created, nil
+}
+
+func (s *PhotoServiceImpl) GetByUserID(userID int) ([]models.Photo, error) {
+	photo, err := s.photoRepository.FindByUserID(userID)
+	if err != nil {
+		return photo, err
+	}
+	return photo, nil
 }
 
 func (s *PhotoServiceImpl) GetByID(ID int) (models.Photo, error) {
@@ -46,10 +54,10 @@ func (s *PhotoServiceImpl) GetByID(ID int) (models.Photo, error) {
 }
 
 func (s *PhotoServiceImpl) Update(inputID int, inputData app.PhotoInput) (models.Photo, error) {
-	err := s.validate.Struct(inputData)
-	if err != nil {
-		return models.Photo{}, err
-	}
+	// err := s.validate.Struct(inputData)
+	// if err != nil {
+	// 	return models.Photo{}, err
+	// }
 
 	photo, err := s.photoRepository.FindByID(inputID)
 	if err != nil {

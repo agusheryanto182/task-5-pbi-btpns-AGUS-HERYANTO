@@ -4,8 +4,6 @@ import "github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/models"
 
 type UpdateUserFormatter struct {
 	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Bio      string `json:"bio"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 }

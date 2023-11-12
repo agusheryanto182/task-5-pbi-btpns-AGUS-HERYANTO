@@ -7,7 +7,8 @@ import (
 
 type PhotoService interface {
 	Create(inputID int, inputData app.PhotoInput) (models.Photo, error)
-	GetByID(ID int) (models.Photo, error)
+	GetByUserID(userID int) ([]models.Photo, error)
+	GetByID (ID int) (models.Photo, error)
 	Update(inputID int, inputData app.PhotoInput) (models.Photo, error)
 	Delete(ID int) error
 }

@@ -64,13 +64,7 @@ func (s *UserServiceImpl) LoginUser(input app.LoginInput) (models.User, error) {
 }
 
 func (s *UserServiceImpl) IsEmailAvailable(input string) (bool, error) {
-	err := s.validate.Struct(input)
-	if err != nil {
-		return false, err
-	}
-
-	email := input
-	user, err := s.userRepository.FindByEmail(email)
+	user, err := s.userRepository.FindByEmail(input)
 	if err != nil {
 		return false, err
 	}
@@ -81,13 +75,7 @@ func (s *UserServiceImpl) IsEmailAvailable(input string) (bool, error) {
 }
 
 func (s *UserServiceImpl) IsUsernameAvailable(input string) (bool, error) {
-	err := s.validate.Struct(input)
-	if err != nil {
-		return false, err
-	}
-
-	username := input
-	user, err := s.userRepository.FindByUsername(username)
+	user, err := s.userRepository.FindByUsername(input)
 	if err != nil {
 		return false, err
 	}
@@ -110,13 +98,13 @@ func (s *UserServiceImpl) GetUserByID(ID int) (models.User, error) {
 	return user, nil
 }
 
-func (s *UserServiceImpl) UpdateUser(inputID app.GetUserDetailInput, inputData app.FormUpdateUserInput) (models.User, error) {
+func (s *UserServiceImpl) UpdateUser(userID int, inputData app.FormUpdateUserInput) (models.User, error) {
 	err := s.validate.Struct(inputData)
 	if err != nil {
 		return models.User{}, err
 	}
 
-	user, err := s.userRepository.FindByID(inputID.ID)
+	user, err := s.userRepository.FindByID(userID)
 	if err != nil {
 		return user, err
 	}

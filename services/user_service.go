@@ -11,6 +11,6 @@ type UserService interface {
 	IsEmailAvailable(input string) (bool, error)
 	IsUsernameAvailable(input string) (bool, error)
 	GetUserByID(ID int) (models.User, error)
-	UpdateUser(inputID app.GetUserDetailInput, inputData app.FormUpdateUserInput) (models.User, error)
+	UpdateUser(userID int, inputData app.FormUpdateUserInput) (models.User, error)
 	DeleteUser(ID int) error
 }
