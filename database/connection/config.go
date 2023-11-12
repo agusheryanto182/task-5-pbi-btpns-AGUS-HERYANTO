@@ -14,3 +14,5 @@ func NewDB() *gorm.DB {
 	}
 	return db
 }
+
+// migrate -database 'mysql://root:Root1234!@tcp(localhost:3306)/go_personalize_user' -path database/migrations up
