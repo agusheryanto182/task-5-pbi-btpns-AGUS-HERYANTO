@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/app"
+	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/helpers"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/models"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/repositories"
 	"github.com/go-playground/validator/v10"
@@ -25,10 +26,8 @@ func (s *UserServiceImpl) RegisterUser(input app.RegisterUserInput) (models.User
 	user.Username = input.Username
 	user.Email = input.Email
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
-	if err != nil {
-		return user, err
-	}
+	passwordHash := helpers.HashPassword(input.Password)
+
 	user.Password = string(passwordHash)
 
 	newUser, err := s.userRepository.Save(user)
@@ -44,10 +43,7 @@ func (s *UserServiceImpl) LoginUser(input app.LoginInput) (models.User, error) {
 		return models.User{}, err
 	}
 
-	email := input.Email
-	password := input.Password
-
-	user, err := s.userRepository.FindByEmail(email)
+	user, err := s.userRepository.FindByEmail(input.Email)
 	if err != nil {
 		return user, err
 	}
@@ -56,9 +52,9 @@ func (s *UserServiceImpl) LoginUser(input app.LoginInput) (models.User, error) {
 		return user, errors.New("User not found")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		return user, err
+	ok := helpers.ComparePassword(user.Password, input.Password)
+	if !ok {
+		return models.User{}, errors.New("password not match")
 	}
 	return user, nil
 }

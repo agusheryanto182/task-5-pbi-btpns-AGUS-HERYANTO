@@ -1,4 +1,4 @@
-package middlewares
+package helpers
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 type AuthServiceImpl struct {
 }
 
-var SECRET_KEY = []byte("PURPLESNAP_ITSASECRET")
+var SECRET_KEY = []byte("ITSASECRET")
 
 func (a *AuthServiceImpl) GenerateToken(userID int) (string, error) {
 	claim := jwt.MapClaims{}

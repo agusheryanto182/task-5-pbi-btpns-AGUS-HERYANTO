@@ -17,8 +17,8 @@ func (r *PhotoRepositoryImpl) Save(photo models.Photo) (models.Photo, error) {
 	return photo, nil
 }
 
-func (r *PhotoRepositoryImpl) FindByUserID(userID int) ([]models.Photo, error) {
-	var photo []models.Photo
+func (r *PhotoRepositoryImpl) FindByUserID(userID int) (models.Photo, error) {
+	var photo models.Photo
 	err := r.db.Where("user_id = ?", userID).Find(&photo).Error
 	if err != nil {
 		return photo, err

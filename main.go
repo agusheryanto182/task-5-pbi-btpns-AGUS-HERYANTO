@@ -5,7 +5,7 @@ import (
 
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/controllers"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/database/connection"
-	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/middlewares"
+	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/helpers"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/repositories"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/router"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/services"
@@ -16,7 +16,7 @@ func main() {
 	db := connection.NewDB()
 	validate := validator.New()
 
-	authService := middlewares.NewAuthService()
+	authService := helpers.NewAuthService()
 
 	userRepository := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepository, validate)

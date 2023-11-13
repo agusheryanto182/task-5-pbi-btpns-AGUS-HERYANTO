@@ -4,18 +4,18 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/app"
+	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/helpers"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func AuthMiddleware(authService AuthService, userService services.UserService) gin.HandlerFunc {
+func AuthMiddleware(authService helpers.AuthService, userService services.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
 		if !strings.Contains(authHeader, "Bearer") {
-			response := app.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
@@ -28,14 +28,14 @@ func AuthMiddleware(authService AuthService, userService services.UserService) g
 
 		token, err := authService.ValidateToken(tokenString)
 		if err != nil {
-			response := app.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 
 		claim, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
-			response := app.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
@@ -44,7 +44,7 @@ func AuthMiddleware(authService AuthService, userService services.UserService) g
 
 		user, err := userService.GetUserByID(userID)
 		if err != nil {
-			response := app.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}

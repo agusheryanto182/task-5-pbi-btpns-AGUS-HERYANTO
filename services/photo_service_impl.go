@@ -33,7 +33,7 @@ func (s *PhotoServiceImpl) Create(inputID int, inputData app.PhotoInput) (models
 	return created, nil
 }
 
-func (s *PhotoServiceImpl) GetByUserID(userID int) ([]models.Photo, error) {
+func (s *PhotoServiceImpl) GetByUserID(userID int) (models.Photo, error) {
 	photo, err := s.photoRepository.FindByUserID(userID)
 	if err != nil {
 		return photo, err
