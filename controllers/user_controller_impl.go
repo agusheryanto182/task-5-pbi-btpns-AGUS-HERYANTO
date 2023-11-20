@@ -24,14 +24,14 @@ func (h *UserControllerImpl) Register(c *gin.Context) {
 		errors := helpers.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 
-		response := helpers.APIResponse("Register account failed 1", http.StatusUnprocessableEntity, "error", errorMessage)
+		response := helpers.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
 	isEmailAvailable, err := h.userService.IsEmailAvailable(input.Email)
 	if err != nil {
-		response := helpers.APIResponse("Register account failed 2", http.StatusUnprocessableEntity, "error", nil)
+		response := helpers.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
@@ -128,7 +128,7 @@ func (h *UserControllerImpl) Update(c *gin.Context) {
 		return
 	}
 
-	err = c.ShouldBind(&inputData)
+	err = c.ShouldBindJSON(&inputData)
 	if err != nil {
 		errors := helpers.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -163,23 +163,24 @@ func (h *UserControllerImpl) Update(c *gin.Context) {
 }
 
 func (h *UserControllerImpl) Delete(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(models.User)
-	ID := currentUser.ID
+	userId, _ := strconv.Atoi(c.Param("userId"))
 
-	userID, err := strconv.Atoi(c.Param("userId"))
+	currentUser := c.MustGet("currentUser").(models.User)
+
+	userDetail, err := h.userService.GetUserByID(userId)
 	if err != nil {
-		response := helpers.APIResponse("Invalid get photo ID", http.StatusBadRequest, "error", nil)
+		response := helpers.APIResponse("Failed to get detail user", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	if currentUser.ID != userID {
+	if userDetail.ID != currentUser.ID{
 		response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 		c.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
-	err = h.userService.DeleteUser(ID)
+	err = h.userService.DeleteUser(currentUser.ID)
 	if err != nil {
 		response := helpers.APIResponse("Failed to delete user", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)

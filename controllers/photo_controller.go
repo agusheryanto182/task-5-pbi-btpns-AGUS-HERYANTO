@@ -6,7 +6,7 @@ import (
 
 type PhotoController interface {
 	Create(c *gin.Context)
-	GetByUserID(c *gin.Context)
+	GetPhoto(c *gin.Context)
 	Edit(c *gin.Context)
 	Delete(c *gin.Context)
 }

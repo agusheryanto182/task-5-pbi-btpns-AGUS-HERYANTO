@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/app"
 	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/helpers"
@@ -17,9 +18,28 @@ type PhotoControllerImpl struct {
 }
 
 func (h *PhotoControllerImpl) Create(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(models.User)
+	userID := currentUser.ID
+
+	checkPhoto, err := h.photoService.GetByUserID(userID)
+	if err != nil {
+		response := helpers.APIResponse("Photo is not found", http.StatusNotFound, "failed", err)
+		c.JSON(http.StatusNotFound, response)
+		return
+	}
+	if checkPhoto.UserID != 0 {
+		err := h.photoService.Delete(checkPhoto.UserID)
+		if err != nil {
+			response := helpers.APIResponse("Photo is not found", http.StatusNotFound, "failed", err)
+
+			c.JSON(http.StatusNotFound, response)
+			return
+		}
+	}
+
 	var input app.PhotoInput
 
-	err := c.ShouldBind(&input)
+	err = c.ShouldBind(&input)
 	if err != nil {
 		errors := helpers.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -39,8 +59,6 @@ func (h *PhotoControllerImpl) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	currentUser := c.MustGet("currentUser").(models.User)
-	userID := currentUser.ID
 
 	path := fmt.Sprintf("images/avatars/%d-%s", userID, file.Filename)
 
@@ -56,17 +74,6 @@ func (h *PhotoControllerImpl) Create(c *gin.Context) {
 	}
 
 	input.PhotoURL = path
-
-	checkPhoto, _ := h.photoService.GetByUserID(currentUser.ID)
-	if checkPhoto.ID != 0 {
-		err = h.photoService.Delete(checkPhoto.ID)
-		if err != nil {
-			response := helpers.APIResponse("Delete photo is failed", http.StatusBadRequest, "failed", err)
-
-			c.JSON(http.StatusBadRequest, response)
-			return
-		}
-	}
 
 	_, err = h.photoService.Create(userID, input)
 	if err != nil {
@@ -86,9 +93,8 @@ func (h *PhotoControllerImpl) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *PhotoControllerImpl) GetByUserID(c *gin.Context) {
+func (h *PhotoControllerImpl) GetPhoto(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(models.User)
-
 	photoDetail, err := h.photoService.GetByUserID(currentUser.ID)
 	if err != nil {
 		response := helpers.APIResponse("Failed to get detail photo", http.StatusBadRequest, "error", nil)
@@ -105,7 +111,8 @@ func (h *PhotoControllerImpl) Edit(c *gin.Context) {
 
 	currentUser := c.MustGet("currentUser").(models.User)
 
-	photoDetail, err := h.photoService.GetByUserID(currentUser.ID)
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
+	photoDetail, err := h.photoService.GetByID(photoId)
 	if err != nil {
 		response := helpers.APIResponse("Failed to get detail photo", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -167,14 +174,21 @@ func (h *PhotoControllerImpl) Edit(c *gin.Context) {
 func (h *PhotoControllerImpl) Delete(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(models.User)
 
-	checkPhoto, err := h.photoService.GetByUserID(currentUser.ID)
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
+	photoDetail, err := h.photoService.GetByID(photoId)
 	if err != nil {
-		response := helpers.APIResponse("Failed get detail photo", http.StatusBadRequest, "error", nil)
+		response := helpers.APIResponse("Failed to get detail photo", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	err = h.photoService.Delete(checkPhoto.UserID)
+	if photoDetail.UserID != currentUser.ID {
+		response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	err = h.photoService.Delete(currentUser.ID)
 	if err != nil {
 		response := helpers.APIResponse("Failed to delete photo", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
