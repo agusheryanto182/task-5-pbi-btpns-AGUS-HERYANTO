@@ -3,16 +3,15 @@ package connection
 import (
 	"log"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/agusheryanto182/task-5-pbi-btpns-AGUS-HERYANTO/models"
+	"github.com/joeshaw/envdecode"
 )
 
-func NewDB() *gorm.DB {
-	db, err := gorm.Open(mysql.Open("root:Root1234!@tcp(localhost:3306)/go_personalize_user?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
+func NewConfig() *models.Global {
+	var c models.Global
+	if err := envdecode.StrictDecode(&c); err != nil {
+		log.Fatalf("Failed to decode: %s", err)
 	}
-	return db
-}
 
-// migrate -database 'mysql://root:Root1234!@tcp(localhost:3306)/go_personalize_user' -path database/migrations up
+	return &c
+}

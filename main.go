@@ -13,7 +13,8 @@ import (
 )
 
 func main() {
-	db := connection.NewDB()
+	conf := connection.NewConfig()
+	db := connection.NewDB(conf)
 	validate := validator.New()
 
 	authService := helpers.NewAuthService()

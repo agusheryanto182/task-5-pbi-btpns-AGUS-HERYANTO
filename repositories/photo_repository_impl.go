@@ -45,7 +45,7 @@ func (r *PhotoRepositoryImpl) Update(photo models.Photo) (models.Photo, error) {
 
 func (r *PhotoRepositoryImpl) Delete(ID int) error {
 	var photo models.Photo
-	err := r.db.Where("id = ?", ID).Delete(&photo).Error
+	err := r.db.Where("user_id = ?", ID).Delete(&photo).Error
 	if err != nil {
 		return err
 	}

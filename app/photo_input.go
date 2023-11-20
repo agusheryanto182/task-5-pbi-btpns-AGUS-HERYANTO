@@ -10,4 +10,5 @@ type PhotoInput struct {
 type PhotoUpdate struct {
 	Title   string `form:"title" validate:"max=225,min=1"`
 	Caption string `form:"caption" validate:"max=225,min=1"`
+	PhotoURL string `json:"photo_url" validate:"max=225,min=1"`
 }
