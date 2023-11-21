@@ -24,17 +24,12 @@ func (h *UserControllerImpl) Register(c *gin.Context) {
 		errors := helpers.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 
-		response := helpers.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		response := helpers.APIResponse("Input invalid", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
-	isEmailAvailable, err := h.userService.IsEmailAvailable(input.Email)
-	if err != nil {
-		response := helpers.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", nil)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
+	isEmailAvailable, _ := h.userService.IsEmailAvailable(input.Email)
 
 	if !isEmailAvailable {
 		response := helpers.APIResponse("Email has been used", http.StatusUnprocessableEntity, "error", nil)
@@ -42,12 +37,7 @@ func (h *UserControllerImpl) Register(c *gin.Context) {
 		return
 	}
 
-	isUsernameAvailable, err := h.userService.IsUsernameAvailable(input.Username)
-	if err != nil {
-		response := helpers.APIResponse("Register account failed 3", http.StatusUnprocessableEntity, "error", nil)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
+	isUsernameAvailable, _ := h.userService.IsUsernameAvailable(input.Username)
 
 	if !isUsernameAvailable {
 		response := helpers.APIResponse("Username has been used", http.StatusUnprocessableEntity, "error", nil)
@@ -57,14 +47,14 @@ func (h *UserControllerImpl) Register(c *gin.Context) {
 
 	newUser, err := h.userService.RegisterUser(input)
 	if err != nil {
-		response := helpers.APIResponse("Register account failed 4", http.StatusUnprocessableEntity, "error", nil)
+		response := helpers.APIResponse("Register account failed", http.StatusUnprocessableEntity, "error", nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
 	token, err := h.authService.GenerateToken(newUser.ID)
 	if err != nil {
-		response := helpers.APIResponse("Account registration faile 5", http.StatusUnprocessableEntity, "error", nil)
+		response := helpers.APIResponse("Generate token is failed", http.StatusUnprocessableEntity, "error", nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
@@ -99,7 +89,7 @@ func (h *UserControllerImpl) Login(c *gin.Context) {
 	}
 	token, err := h.authService.GenerateToken(loggedinUser.ID)
 	if err != nil {
-		response := helpers.APIResponse("Login failed", http.StatusUnprocessableEntity, "error", nil)
+		response := helpers.APIResponse("Generate token is failed", http.StatusUnprocessableEntity, "error", nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
@@ -132,7 +122,7 @@ func (h *UserControllerImpl) Update(c *gin.Context) {
 	if err != nil {
 		errors := helpers.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
-		response := helpers.APIResponse("Failed to update user", http.StatusUnprocessableEntity, "Error", errorMessage)
+		response := helpers.APIResponse("Input invalid", http.StatusUnprocessableEntity, "Error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
