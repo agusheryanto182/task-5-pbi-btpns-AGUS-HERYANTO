@@ -109,23 +109,19 @@ func (h *PhotoControllerImpl) GetPhoto(c *gin.Context) {
 func (h *PhotoControllerImpl) Edit(c *gin.Context) {
 	var inputData app.PhotoUpdate
 
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
+
+	photoDetail, _ := h.photoService.GetByID(photoId)
+
 	currentUser := c.MustGet("currentUser").(models.User)
 
-	photoId, _ := strconv.Atoi(c.Param("photoId"))
-	photoDetail, err := h.photoService.GetByID(photoId)
-	if err != nil {
-		response := helpers.APIResponse("Failed to get detail photo", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-
-	if photoDetail.UserID != currentUser.ID {
+	if currentUser.ID != photoDetail.UserID {
 		response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 		c.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
-	err = c.ShouldBind(&inputData)
+	err := c.ShouldBind(&inputData)
 	if err != nil {
 		errors := helpers.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -175,12 +171,8 @@ func (h *PhotoControllerImpl) Delete(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(models.User)
 
 	photoId, _ := strconv.Atoi(c.Param("photoId"))
-	photoDetail, err := h.photoService.GetByID(photoId)
-	if err != nil {
-		response := helpers.APIResponse("Failed to get detail photo", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+
+	photoDetail, _ := h.photoService.GetByID(photoId)
 
 	if photoDetail.UserID != currentUser.ID {
 		response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
@@ -188,7 +180,7 @@ func (h *PhotoControllerImpl) Delete(c *gin.Context) {
 		return
 	}
 
-	err = h.photoService.Delete(currentUser.ID)
+	err := h.photoService.Delete(currentUser.ID)
 	if err != nil {
 		response := helpers.APIResponse("Failed to delete photo", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)

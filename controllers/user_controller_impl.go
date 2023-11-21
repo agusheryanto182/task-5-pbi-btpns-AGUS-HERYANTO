@@ -137,15 +137,15 @@ func (h *UserControllerImpl) Update(c *gin.Context) {
 		return
 	}
 
-	_, err = h.userService.IsUsernameAvailable(inputData.Username)
-	if err != nil {
+	checkUsername, _ := h.userService.IsUsernameAvailable(inputData.Username)
+	if !checkUsername && currentUser.Username != inputData.Username {
 		response := helpers.APIResponse("username has been  used", http.StatusUnprocessableEntity, "error", nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 
-	_, err = h.userService.IsEmailAvailable(inputData.Email)
-	if err != nil {
+	checkEmail, _ := h.userService.IsEmailAvailable(inputData.Email)
+	if !checkEmail && currentUser.Email != inputData.Email {
 		response := helpers.APIResponse("email has been used", http.StatusUnprocessableEntity, "error", nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
@@ -174,7 +174,7 @@ func (h *UserControllerImpl) Delete(c *gin.Context) {
 		return
 	}
 
-	if userDetail.ID != currentUser.ID{
+	if userDetail.ID != currentUser.ID {
 		response := helpers.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 		c.JSON(http.StatusUnauthorized, response)
 		return
